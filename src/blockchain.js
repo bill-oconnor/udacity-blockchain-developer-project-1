@@ -144,9 +144,9 @@ class Blockchain {
         const msgTime = parseInt(message.split(":")[1], 10);
         const currentTime = parseInt(`${Date.now()}`.slice(0, -3), 10);
         const timeElapsedInSeconds = currentTime - msgTime;
-        if (timeElapsedInSeconds > 3000) {
+        if (timeElapsedInSeconds > 300) {
           reject(
-            "Cannot submit star. More than 50 minutes have elapsed since the message was produced"
+            "Cannot submit star. More than 5 minutes have elapsed since the message was produced"
           );
         }
         const verified = bitcoinMessage.verify(message, address, signature);
