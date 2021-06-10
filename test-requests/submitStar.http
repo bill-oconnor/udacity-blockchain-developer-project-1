@@ -1,0 +1,12 @@
+POST http://localhost:8000/submitstar
+Content-Type: application/json
+
+{
+  "address": "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN",
+  "message": "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN:1623347808:starRegistry",
+  "signature": "Gw1pfjuRZkzV2Aio41lZslVFdM+SNKw8BE0896a97XScEDRvbWzqSl9rnk6Cp1JyPzOmvlK4JMuAvqr0GY5BXko=",
+  "star": {
+    "data": "best start in universe",
+    "owner": "wildbill"
+  }
+}

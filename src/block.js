@@ -64,11 +64,12 @@ class Block {
         // Decoding the data to retrieve the JSON representation of the object
         // Parse the data to an object to be retrieve.
         const decodedBlockData = JSON.parse(hex2ascii(this.body));
-
+        console.log(`${decodedBlockData}`);
+        console.log(`${self.previousBlockHash}`);
         // Resolve with the data if the object isn't the Genesis block
         resolve(self.previousBlockHash !== null ? decodedBlockData : undefined);
       } catch (e) {
-        reject(e);
+        reject(`Error getting block data: ${e}`);
       }
     });
   }
