@@ -3,10 +3,11 @@ Content-Type: application/json
 
 {
   "address": "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN",
-  "message": "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN:1623355207:starRegistry",
-  "signature": "G6zEV/lG3vdv3dKL6A4txfG7c1UVGiM/O40eqgsy0o79gN5c/6PCq5bhWiA1vIK7JqvBE4ijTwg2dvsIYpJkCnM=",
+  "message": "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN:1623362714:starRegistry",
+  "signature": "HPNMrNtIGipy+FFxmcnlj2tKleVm5dOS/q+ibpsTzX/UhuQkBr2ITHbmWhwaao5UQvz/nQjPKCAEJZw71sEcYS8=",
   "star": {
-    "data": "third best start in universe",
+    "data": "second best start in universe",
     "owner": "wildbill"
   }
 }
+

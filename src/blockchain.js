@@ -62,23 +62,48 @@ class Blockchain {
    */
   _addBlock(block) {
     let self = this;
-    return new Promise(async (resolve, reject) => {
-      try {
-        self.height += 1;
-        if (self.height > 0) {
-          block.previousBlockHash = self.chain[self.chain.length - 1].hash;
+    function validateChain() {
+      const resolutionPromise = (validChain) => {
+        return new Promise((resolve, reject) => {
+          if (!validChain) {
+            reject("Failed to add block to chain - chain validation failed");
+          } else {
+            resolve("");
+          }
+        });
+      };
+      return self
+        .validateChain()
+        .then((errors) => {
+          return errors.length === 0;
+        })
+        .then(resolutionPromise);
+    }
+
+    function updateBlock(block) {
+      return new Promise((resolve) => {
+        if (self.height > -1) {
+          block.previousBlockHash = self.chain[self.height].hash;
         }
 
-        block.height = self.height;
+        block.height = self.height + 1;
         block.time = Date.now();
         block.hash = SHA256(block);
+        resolve(block);
+      });
+    }
+
+    function updateChain(block) {
+      return new Promise((resolve) => {
+        self.height += 1;
 
         self.chain.push(block);
         resolve(block);
-      } catch (e) {
-        reject(e);
-      }
-    });
+      });
+    }
+    return validateChain()
+      .then(() => updateBlock(block))
+      .then(updateChain);
   }
 
   /**
@@ -119,9 +144,9 @@ class Blockchain {
         const msgTime = parseInt(message.split(":")[1], 10);
         const currentTime = parseInt(`${Date.now()}`.slice(0, -3), 10);
         const timeElapsedInSeconds = currentTime - msgTime;
-        if (timeElapsedInSeconds > 300) {
+        if (timeElapsedInSeconds > 3000) {
           reject(
-            "Cannot submit star. More than 5 minutes have elapsed since the message was produced"
+            "Cannot submit star. More than 50 minutes have elapsed since the message was produced"
           );
         }
         const verified = bitcoinMessage.verify(message, address, signature);
@@ -132,7 +157,8 @@ class Blockchain {
           message,
           signature,
         });
-        resolve(self._addBlock(block));
+        const b = self._addBlock(block);
+        resolve(b);
       } catch (e) {
         reject(`There's been an error ~~ ${e}`);
       }
@@ -200,9 +226,13 @@ class Blockchain {
     let self = this;
     let errors = [];
     function validatePreviousHash(block, previousBlock) {
-      return (
-        block.previousBlockHash === (previousBlock ? previousBlock.hash : null)
-      );
+      const previousBlockHash = previousBlock ? previousBlock.hash : "";
+      const isGenesisBlock = block.height < 1;
+      const isPreviousHashValid =
+        (isGenesisBlock && block.previousBlockHash === null) ||
+        JSON.stringify(block.previousBlockHash) ===
+          JSON.stringify(previousBlockHash);
+      return isPreviousHashValid;
     }
 
     for (let i = 0; i < self.chain.length; i++) {
@@ -225,7 +255,6 @@ class Blockchain {
         errors.push(errorBlock);
       }
     }
-
     return errors;
   }
 }
