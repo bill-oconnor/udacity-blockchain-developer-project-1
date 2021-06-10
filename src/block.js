@@ -43,7 +43,7 @@ class Block {
       // Recalculate the hash of the Block
       const recalculatedHash = SHA256(self);
       // Comparing if the hashes changed
-      resolve(recalculatedHash === currentHash);
+      resolve(JSON.stringify(recalculatedHash) === JSON.stringify(currentHash));
     });
   }
 

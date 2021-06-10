@@ -196,18 +196,37 @@ class Blockchain {
    * 1. You should validate each block using `validateBlock`
    * 2. Each Block should check the with the previousBlockHash
    */
-  validateChain() {
+  async validateChain() {
     let self = this;
-    return Promise.all(
-      self.chain
-        .map((block) => block.validate().then((valid) => ({ block, valid })))
-        .filter(({ block, valid }) => {
-          !valid;
-        })
-        .map(({ block, valid }) => {
-          return `Block with hash ${block.hash} failed hash validation`;
-        })
-    );
+    let errors = [];
+    function validatePreviousHash(block, previousBlock) {
+      return (
+        block.previousBlockHash === (previousBlock ? previousBlock.hash : null)
+      );
+    }
+
+    for (let i = 0; i < self.chain.length; i++) {
+      const block = self.chain[i];
+      const previousBlock = i > 0 ? self.chain[i - 1] : null;
+      const validPreviousHash = validatePreviousHash(block, previousBlock);
+      const validBlock = await block.validate();
+
+      if (!validPreviousHash || !validBlock) {
+        const errorBlock = {
+          block,
+          errors: [],
+        };
+        if (!validPreviousHash)
+          errorBlock.errors.push(
+            "previousBlockHash does not match the hash of the previous block"
+          );
+        if (!validBlock)
+          errorBlock.errors.push("block fails hash recalculation validation");
+        errors.push(errorBlock);
+      }
+    }
+
+    return errors;
   }
 }
 
